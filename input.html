@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Oreo Stack</title>
+</head>
+<body>
+
+    <div id="container">
+        <input type="text" placeholder="Enter the String" id="myInput">
+        <button type="button" onclick="getInputValue();">Get Value</button>
+    </div>
+
+    
+    <script>
+        function getInputValue(){
+            var inputVal = document.getElementById("myInput").value;
+            localStorage.setItem('inputVal',inputVal);
+            window.location.href="index.html";
+        }
+    //     var text = document.createElement('div');
+    //    var text = document.getElementById('container').appendChild(text);
+    //    text.innerHTML =  "<input type= 'text' placeholder= 'Enter the String' id='myInput'>"
+    </script>
+    
+</body>
+</html>
