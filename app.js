@@ -1,77 +1,134 @@
+
+
 var canvas = document.querySelector('canvas');
 var ctx = canvas.getContext('2d');
 var W = window.innerWidth;
 var H = window.innerHeight;
 canvas.width = W;
 canvas.height = H;
-var inputVal = localStorage.getItem('inputVal');
+var number = localStorage.getItem('number');
+var oreoStrings = [];
+var inputVal = localStorage.getItem('inputVal0');
 var arr = [];
+var oreoArr = [];
+var handleLocation =[];
+var hArr = [];
+var singularArr = [];
+var isDragging = [];
+var p =0;
 
- var handle = {
-        x: W/2,
-        y:H/2,
-        w:300
+
+for(var i=0;i<number;i++)
+{
+    oreoStrings.push(localStorage.getItem('inputVal'+i));
+    handleLocation.push(
+         {
+            x: i*W/3,
+            y:W/5,
+            w: W/5
+        }
+
+    )
+    hArr.push(handleLocation[i].y);
+    isDragging.push(false);
+}
+
+for(var j=0;j<oreoStrings.length;j++)
+{   singularArr = [];
+    for(var i=0;i<oreoStrings[j].length;i++)
+    {
+        if(oreoStrings[j][i]!='E')
+        {
+            singularArr.push(oreoStrings[j][i]);
+        }
     }
-
-  
-
-  
-
- var h = handle.y;
+    oreoArr.push(singularArr);
+}
 
 
 
 
- for(var i=0;i<inputVal.length;i++)
- {
-     if(inputVal[i]!='E')
-     {
-         arr.push(inputVal[i]);
-     }
- }
 
  window.onload = function(){
      drawOreo();
+     
  }
 
- var dragCircle={
-    x: handle.x + 320,
-    y: h+20,
-    r: 10
- }
+ 
 
 
+
+ 
 
   function drawOreo()
-  {
-    for(var i=0;i<arr.length;i++)
-    {
-        if(arr[i]=='O')
-        {   
-            for(var j=0;j<5;j++)
-            {
-                drawCylinder(ctx,handle.x,h,handle.w,10,"#181818");
-                h=h+10;
+  {  
+
+   if(p==0)
+   {p++;
+    for(var k=0;k<oreoArr.length;k++)
+    {  
+        for(var l =0;l<oreoArr[k].length;l++)
+        {
+            if(oreoArr[k][l]=='O')
+            {   
+                for(var j=0;j<5;j++)
+                {
+                    drawCylinder(ctx,handleLocation[k].x,hArr[k],handleLocation[k].w,W/200,"#181818");
+                    hArr[k]=hArr[k]+W/200;
+                }
+          
             }
-      
+            if(oreoArr[k][l]=='R')
+            {   
+                drawCylinder(ctx,handleLocation[k].x+(0.1*handleLocation[k].w),hArr[k],handleLocation[k].w*0.8,W/125,"#fffdd0");
+                hArr[k]=hArr[k]+W/125;
+            }
         }
-        if(arr[i]=='R')
-        {   
-            drawCylinder(ctx,handle.x+25,h,handle.w*0.8,25,"#fffdd0");
-            h=h+25;
-        }
+
+        ctx.beginPath();
+        ctx.rect(handleLocation[k].x-W/100, handleLocation[k].y-W/100, handleLocation[k].w + W/50, hArr[k]-handleLocation[k].y+W/50);
+        ctx.stroke();
     }
 
-      ctx.beginPath();
-      ctx.rect(handle.x-20, handle.y-20, 340, h-handle.y+40);
-      ctx.stroke();
+   }
+   else
+   {
+    for(var k=0;k<oreoArr.length;k++)
+    {   
+
+        if(isDragging[k]==true)
+        {
+            for(var l =0;l<oreoArr[k].length;l++)
+            {
+                if(oreoArr[k][l]=='O')
+                {   
+                    for(var j=0;j<5;j++)
+                    {
+                        drawCylinder(ctx,handleLocation[k].x,hArr[k],handleLocation[k].w,W/200,"#181818");
+                        hArr[k]=hArr[k]+W/200;
+                    }
+              
+                }
+                if(oreoArr[k][l]=='R')
+                {   
+                    drawCylinder(ctx,handleLocation[k].x+(0.1*handleLocation[k].w),hArr[k],handleLocation[k].w*0.8,W/125,"#fffdd0");
+                    hArr[k]=hArr[k]+W/125;
+                }
+            }
+    
+            ctx.beginPath();
+            ctx.rect(handleLocation[k].x-W/100, handleLocation[k].y-W/100, handleLocation[k].w + W/50, hArr[k]-handleLocation[k].y+W/50);
+            ctx.stroke();
+        }
+      
+    }
+
+   }
 
     
+     
 
-    //   ctx.beginPath();
-    //   ctx.arc(dragCircle.x,dragCircle.y,dragCircle.r,0,Math.PI*2,true);
-    //   ctx.fillStyle="#c70039";
-    //   ctx.fill();
+    
 
   }
   
@@ -80,70 +137,86 @@ var arr = [];
     
 
 
-
-
-
+  var tempArr = [];
 document.body.addEventListener("mousedown",(event)=>{
-    if(distanceXY(handle.x,handle.y,event.clientX,event.clientY))
-    {
-        document.body.addEventListener("mousemove",onMouseMove);
-        document.body.addEventListener("mouseup",onMouseUp);
-    }
-    if(collisionDistance(event.clientX,event.clientY,dragCircle.x,dragCircle.y)<dragCircle.r)
-    {
-        document.body.addEventListener("mousemove",onMouseMoveDrag);
-        // document.body.addEventListener("mouseup",onMouseUpDrag);
+ 
+    for(var i=0;i<handleLocation.length;i++)
+    {    tempArr.push(hArr[i]);
+        // console.log(distanceXY(handleLocation[i].x,handleLocation[i].y,event.clientX,event.clientY,hArr[i]));
+        if(distanceXY(handleLocation[i].x,handleLocation[i].y,event.clientX,event.clientY,tempArr[i]))
+        {   
+            console.log("true");
+            isDragging[i] = true;
+            document.body.addEventListener("mousemove",(event)=>{
+                onMouseMove(event);
+            });
+            document.body.addEventListener("mouseup",onMouseUp);
+        }
+   
+       
     }
 })
- 
 
+
+
+
+
+
+var l=0;
 function onMouseMove(event)
-{
-  
-    ctx.clearRect(handle.x-50,handle.y-50,400,h+100)
-    handle.x = event.clientX;
-    handle.y = event.clientY;
-    dragCircle.x = handle.x + 320
-    
-    h=handle.y;
-    dragCircle.y = h+20;
-    drawOreo();
-  
+{  
+   for(i=0;i<handleLocation.length;i++)
+   {
+       if(isDragging[i]==true)
+       {
+           ctx.clearRect(handleLocation[i].x-W/90,handleLocation[i].y-W/45,handleLocation[i].w+W/45,hArr[i]+W/22.5);
+           handleLocation[i].x = event.clientX;
+           handleLocation[i].y = event.clientY;
+           drawOreo();
+           hArr[i] = handleLocation[i].y
+       }
+      
+       hArr[i] = handleLocation[i].y;
+   }
+   
 }
 
 function onMouseUp()
-{
-    document.body.removeEventListener("mousemove",onMouseMove);
-    document.body.removeEventListener("mouseup",onMouseUp);
-}
-
-function onMouseMoveDrag(event)
-{
-
-}
-
-
-function distanceXY(x0, y0, x1, y1) {
-    var dx = x1 - x0,
-        dy = y1 - y0;
-        if(dx<300 && dy<h)
+{  
+    for(i=0;i<handleLocation.length;i++)
+    {
+        if(isDragging[i]=true)
         {
-            return 1;
+            isDragging[i]=false;
+            document.body.removeEventListener("mousemove",(event));
+            document.body.removeEventListener("mouseup",onMouseUp);
         }
-        else
-        {
-            return 0;
-        }
- 
+    }
+  
 }
 
-function collisionDistance(x0,y0,x1,y1){
+
+
+
+function distanceXY(x0, y0, x1, y1,h) {
     var dx = x1 - x0,
-        dy = y1 - y0;
-        console.log(Math.sqrt(dx*dx+dy*dy));
-        return Math.sqrt(dx*dx+dy*dy);
-       
+    dy = y1 - y0;
+    // console.log(dx + " "+ dy);
+    console.log(h);
+    if(dx< W/5 && dy<h && dy>0 && dx>0&&dy<(h-y0))
+    {
+
+        return 1;
+      
+    }
+    else
+    {
+        return 0;
+    }
+    
 }
+
+
 
 
 

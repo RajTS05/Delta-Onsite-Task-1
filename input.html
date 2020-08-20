@@ -8,20 +8,39 @@
 <body>
 
     <div id="container">
-        <input type="text" placeholder="Enter the String" id="myInput">
-        <button type="button" onclick="getInputValue();">Get Value</button>
+        <input type="text" placeholder="Enter the Number of Oreos" id="myInput">
+        <button type="button" onclick="getInputValue();" id="button">Get Value</button>
     </div>
 
     
     <script>
         function getInputValue(){
-            var inputVal = document.getElementById("myInput").value;
-            localStorage.setItem('inputVal',inputVal);
+            var number = document.getElementById("myInput").value;
+            document.getElementById("myInput").style.visibility="hidden";
+            document.getElementById("button").style.visibility="hidden";
+            localStorage.setItem('number',number);
+           
+            for(i=0;i<number;i++)
+            {
+                var text = document.createElement('div');
+                var text = document.getElementById('container').appendChild(text);
+                text.innerHTML =  "<input type= 'text' placeholder= 'Enter the String' id='myInput"+i+"'"+">";
+            }
+            var button = document.createElement('div');
+            var button = document.getElementById('container').appendChild(button);
+            button.innerHTML = "<button type='submit' onclick='oreoStrings();'>SUBMIT</button>";
+        }
+        function oreoStrings()
+        {    
+            var number = localStorage.getItem('number');
+            for(var i=0;i<number;i++)
+            {
+                var input = document.getElementById('myInput'+i).value;
+                localStorage.setItem('inputVal'+i,input);
+            }
             window.location.href="index.html";
         }
-    //     var text = document.createElement('div');
-    //    var text = document.getElementById('container').appendChild(text);
-    //    text.innerHTML =  "<input type= 'text' placeholder= 'Enter the String' id='myInput'>"
+      
     </script>
     
 </body>
